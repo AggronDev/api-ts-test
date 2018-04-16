@@ -1,4 +1,6 @@
-# Api REST Boilerplate para ser usada em outros projetos utilizando: 
+# Api REST Boilerplate para ser usada em outros projetos
+
+ Utilizando as ferramentas:
 
 - Node.js
 - Typescript
