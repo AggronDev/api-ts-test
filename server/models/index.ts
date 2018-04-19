@@ -7,32 +7,35 @@ var basename  = path.basename(module.filename);
 var config    = require('../config/env/config')();
 var env       = config.env || 'development';
 var db : any        = {};
+const modelRelations = require('./relations/relations');
 
 if (config.dbURL) {
-    var sequelize = new Sequelize(config.dbURL);
+  var sequelize = new Sequelize(config.dbURL);
 } else {
-    var sequelize = new Sequelize(config.db, config.username, config.password);
+  var sequelize = new Sequelize(config.db, config.username, config.password);
 }
 console.log(__dirname)
 fs
-    .readdirSync(__dirname)
-    .filter(function(file) {
-        let extension = '.js'
-        if(process.env.NODE_ENV == 'development') extension = '.ts'
-        return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === `${extension}`);
-    })
-    .forEach(function(file) {
-        var model = sequelize['import'](path.join(__dirname, file));
-        db[model.name] = model;
-    });
+  .readdirSync(__dirname)
+  .filter(function(file) {
+    let extension = '.js'
+    if(process.env.NODE_ENV == 'development') extension = '.ts'
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === `${extension}`);
+  })
+  .forEach(function(file) {
+    var model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
 
 Object.keys(db).forEach(function(modelName) {
-    if (db[modelName].associate) {
-        db[modelName].associate(db);
-    }
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+modelRelations(db);
 
 module.exports = db;
